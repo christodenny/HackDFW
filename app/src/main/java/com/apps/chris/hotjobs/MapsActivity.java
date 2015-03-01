@@ -51,7 +51,11 @@ public class MapsActivity extends FragmentActivity {
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
         mMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(40.000, -95.000), 3.0f) );
-
+        mEdit.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                mEdit.setText("");
+            }
+        });
         mButton = (Button) findViewById(R.id.button);
         mEdit = (EditText) findViewById(R.id.input1);
         viewtext = (TextView) findViewById(R.id.output1);
