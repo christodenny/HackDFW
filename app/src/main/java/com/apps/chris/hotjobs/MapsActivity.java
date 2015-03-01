@@ -1,6 +1,8 @@
 package com.apps.chris.hotjobs;
 
 import java.util.*;
+import java.io.*;
+import java.net.*;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,6 +17,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import org.json.*;
+
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -35,6 +40,9 @@ public class MapsActivity extends FragmentActivity {
     EditText mEdit;
     private String query = "";
     TextView viewtext;
+    URL url;
+    HttpURLConnection connection = null;
+    private String[] locations = {"Chicago", "Dallas", "New York", "Houston", "San Francisco", "Seattle", "Miami", "Atlanta" };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +57,19 @@ public class MapsActivity extends FragmentActivity {
         mButton.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View view) {
-                        query= mEdit.
-                                getText().
-                                toString() ;
+                        query= mEdit.getText().toString();
                         //viewtext.setText(query);
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(mEdit.getWindowToken(),0);
+
+                        try {
+                            String[] data = query.split(":");
+                            String[] jobskill = data[0].split(",");
+                            int temp = Integer.parseInt(data[1]);
+                            url = new URL("https://api.usa.gov/jobs/search.json?query=");
+                        }
+                        catch(Exception e) {}
+
                     }
                 });
     }
@@ -141,3 +156,4 @@ public class MapsActivity extends FragmentActivity {
         mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
     }
 }
+
