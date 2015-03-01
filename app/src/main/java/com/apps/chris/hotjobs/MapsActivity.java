@@ -21,6 +21,11 @@ import android.widget.TextView;
 
 import org.json.*;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -51,11 +56,6 @@ public class MapsActivity extends FragmentActivity {
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
         mMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(40.000, -95.000), 3.0f) );
-        mEdit.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                mEdit.setText("");
-            }
-        });
         mButton = (Button) findViewById(R.id.button);
         mEdit = (EditText) findViewById(R.id.input1);
         viewtext = (TextView) findViewById(R.id.output1);
@@ -63,6 +63,7 @@ public class MapsActivity extends FragmentActivity {
                 new View.OnClickListener() {
                     public void onClick(View view) {
                         query= mEdit.getText().toString();
+                        System.out.println(query);
                         //viewtext.setText(query);
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(mEdit.getWindowToken(),0);
@@ -76,6 +77,7 @@ public class MapsActivity extends FragmentActivity {
                             {skillsearch+=d+"+";}
                             for(String l: locations) {
                                 url = new URL("https://api.usa.gov/jobs/search.json?query="+skillsearch+"+in+"+l);
+                                //url = new URL("http://hmkcode.appspot.com/rest/controller/get.json");
                                 String res = new jobRetrieve().execute(url).get();
                                 String findStr = "id";
                                 int lastIndex = 0;
