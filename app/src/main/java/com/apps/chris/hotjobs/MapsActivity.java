@@ -6,6 +6,7 @@ import java.net.*;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.support.v4.app.FragmentActivity;
@@ -41,7 +42,7 @@ public class MapsActivity extends FragmentActivity {
     private String query = "";
     TextView viewtext;
     URL url;
-    HttpURLConnection connection = null;
+
     private String[] locations = {"Chicago", "Dallas", "New York", "Houston", "San Francisco", "Seattle", "Miami", "Atlanta" };
 
     @Override
@@ -61,14 +62,36 @@ public class MapsActivity extends FragmentActivity {
                         //viewtext.setText(query);
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(mEdit.getWindowToken(),0);
-
+                        System.out.println("hello");
                         try {
                             String[] data = query.split(":");
                             String[] jobskill = data[0].split(",");
                             int temp = Integer.parseInt(data[1]);
-                            url = new URL("https://api.usa.gov/jobs/search.json?query=");
-                        }
-                        catch(Exception e) {}
+                            String skillsearch = "";
+                            for(String d: jobskill)
+                            {skillsearch+=d+"+";}
+                            for(String l: locations) {
+                                url = new URL("https://api.usa.gov/jobs/search.json?query="+skillsearch+"+in+"+l);
+                                String res = new jobRetrieve().execute(url).get();
+                                String findStr = "id";
+                                int lastIndex = 0;
+                                int count =0;
+                                while(lastIndex != -1){
+
+                                    lastIndex = res.indexOf(findStr,lastIndex);
+
+                                    if( lastIndex != -1){
+                                        count ++;
+                                        lastIndex+=findStr.length();
+                                    }
+                                }
+                                System.out.println(count+ " "+l);
+
+                            }
+
+
+                           }
+                        catch(Exception e) {e.printStackTrace();}
 
                     }
                 });
@@ -157,3 +180,24 @@ public class MapsActivity extends FragmentActivity {
     }
 }
 
+
+ class jobRetrieve extends AsyncTask<URL, Integer, String>{
+
+     protected String doInBackground(URL... url){
+       try {
+           HttpURLConnection connection = null;
+           InputStream is = null;
+           connection = (HttpURLConnection) url[0].openConnection();
+           connection.setRequestMethod("GET");
+           connection.connect();
+           is = connection.getInputStream();
+           BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+
+           return reader.readLine();
+       }
+       catch(Exception e){e.printStackTrace();}
+        return null;
+    }
+
+
+}
